@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Listing</title>
+	<style>
+		
+		body{
+			margin-left: 50px;
+		}
+		
+	</style>
+	<script src="react.development.js"></script>
+	<script src="react-dom.development.js"></script>
+	<script src="babel.min.js"></script>
+	<script type="text/babel">
+		class ProductList extends React.Component{
+			render(){
+				let products = ['Pen', 'Pencil', 'Marker'];
+				/*let productElements = [];
+				for(let index = 0, count = products.length; index < count; index++){
+					let productEle = (<li key={index}>{products[index]}</li>);
+					productElements.push(productEle);
+				}*/
+				let productElements = products.map((product, index)=>(<li key={index}>{product}</li>));
+
+				return(
+					<div>
+						<label>Product Name :</label>
+						<input type="text" />
+						<input type="button" value="Add New"/>
+						<ol>
+							{productElements}
+						</ol>
+					</div>
+				)
+			}
+		}
+		ReactDOM.render(<ProductList />,
+			document.getElementById('root'));
+	</script>
+
+</head>
+<body>
+	<h1>Products</h1>
+	<hr>
+	<div id="root"></div>
+</body>
+</html>
