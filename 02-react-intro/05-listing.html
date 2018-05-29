@@ -14,9 +14,47 @@
 	<script src="react-dom.development.js"></script>
 	<script src="babel.min.js"></script>
 	<script type="text/babel">
+		class EventEmitter{
+			constructor(){
+				this._listeners = [];
+			}
+			triggerChange(){
+				this._listeners.forEach(listenerFn => listenerFn());
+			}
+			subscribe(listenerFn){
+				this._listeners.push(listenerFn);
+			}
+		}
+		class Products extends EventEmitter{
+			_list = [];
+			constructor(){
+				super();
+			}
+			getAll(){
+				return [...this._list];
+			}
+			addNew(productName){
+				this._list.push(productName);
+				this.triggerChange();
+			}
+		}
 		class ProductList extends React.Component{
+			state = {
+				newProductName : ''
+			};
+			constructor(props){
+				super(props);
+				this.onAddNewClick = this.onAddNewClick.bind(this);
+				this.onTxtProductNameChange = this.onTxtProductNameChange.bind(this);
+			}
+			onAddNewClick(){
+				this.props.model.addNew(this.state.newProductName);
+			}
+			onTxtProductNameChange(evt){
+				this.setState({newProductName : evt.target.value});
+			}
 			render(){
-				let products = ['Pen', 'Pencil', 'Marker'];
+				let products = this.props.model.getAll();
 				/*let productElements = [];
 				for(let index = 0, count = products.length; index < count; index++){
 					let productEle = (<li key={index}>{products[index]}</li>);
@@ -27,8 +65,8 @@
 				return(
 					<div>
 						<label>Product Name :</label>
-						<input type="text" />
-						<input type="button" value="Add New"/>
+						<input type="text" onChange={this.onTxtProductNameChange} />
+						<input type="button" value="Add New" onClick={this.onAddNewClick}/>
 						<ol>
 							{productElements}
 						</ol>
@@ -36,8 +74,14 @@
 				)
 			}
 		}
-		ReactDOM.render(<ProductList />,
-			document.getElementById('root'));
+
+		var productsModel = new Products();
+		function renderApp(){
+			ReactDOM.render(<ProductList model={productsModel}/>,
+				document.getElementById('root'));
+		}
+		renderApp();
+		productsModel.subscribe(renderApp);
 	</script>
 
 </head>
