@@ -66,7 +66,11 @@
 				super();
 			}
 			addNew(bugName){
-				this._list.push(bugName);
+				let newBug = {
+					name : bugName,
+					isClosed : false
+				};
+				this._list.push(newBug);
 				this.triggerChange();
 			}
 			getAll(){
@@ -78,17 +82,22 @@
 			constructor(props){
 				super(props);
 				this.onAddNewClick = this.onAddNewClick.bind(this);
+				this.onBugNameClick = this.onBugNameClick.bind(this);
 			}
 			onAddNewClick(){
 				let bugName = this.txtBugNameRef.current.value;
 				this.props.model.addNew(bugName);
+			}
+			onBugNameClick(){
+				console.log('a bug is being toggled');
 			}
 			render(){
 				let model = this.props.model,
 					bugs = model.getAll(),
 					bugItems = bugs.map((bug,index) => (
 						<li key={index}>
-							<span className="bugname">{bug}</span>
+							<span className="bugname" onClick={this.onBugNameClick}>{bug.name}</span>
+							<div>[{bug.isClosed.toString()}]</div>
 							<div className="datetime">[Created At]</div>
 						</li>
 					));
