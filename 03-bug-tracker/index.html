@@ -60,16 +60,18 @@
 				this._listeners.push(listenerFn);
 			}
 		}
-		class Bug{
+		class Bug extends EventEmitter{
 			name = '';
 			isClosed = false;
 
 			constructor(name){
+				super();
 				this.name = name;
 			}
 
 			toggle(){
 				this.isClosed = !this.isClosed;
+				this.triggerChange();
 			}
 		}
 		class BugsCollection extends EventEmitter{
@@ -84,6 +86,14 @@
 			}
 			getAll(){
 				return [...this._list];
+			}
+			removeClosed(){
+				this._list = this._list.filter(bug => !bug.isClosed);
+				this.triggerChange();
+			}
+			toggle(bug){
+				bug.toggle();
+				this.triggerChange();
 			}
 		}
 		class BugItem extends React.Component{
@@ -111,10 +121,15 @@
 			constructor(props){
 				super(props);
 				this.onAddNewClick = this.onAddNewClick.bind(this);
+				this.onRemoveClosedClick = this.onRemoveClosedClick.bind(this);
 			}
 			onAddNewClick(){
 				let bugName = this.txtBugNameRef.current.value;
 				this.props.model.addNew(bugName);
+			}
+
+			onRemoveClosedClick(){
+				this.props.model.removeClosed();
 			}
 			
 			render(){
@@ -148,7 +163,7 @@
 							<ol>
 								{bugItems}
 							</ol>
-							<input type="button" value="Remove Closed" />
+							<input type="button" value="Remove Closed" onClick={this.onRemoveClosedClick} />
 						</section>
 					</div>
 				)
