@@ -60,16 +60,25 @@
 				this._listeners.push(listenerFn);
 			}
 		}
+		class Bug{
+			name = '';
+			isClosed = false;
+
+			constructor(name){
+				this.name = name;
+			}
+
+			toggle(){
+				this.isClosed = !this.isClosed;
+			}
+		}
 		class BugsCollection extends EventEmitter{
 			_list = [];
 			constructor(){
 				super();
 			}
 			addNew(bugName){
-				let newBug = {
-					name : bugName,
-					isClosed : false
-				};
+				let newBug = new Bug(bugName);
 				this._list.push(newBug);
 				this.triggerChange();
 			}
@@ -83,7 +92,8 @@
 				this.onBugNameClick = this.onBugNameClick.bind(this);
 			}
 			onBugNameClick(){
-				console.log('a bug is being toggled', this.props.bug);
+				this.props.bug.toggle();
+				console.log('After toggling the bug - ', this.props.bug);
 			}
 			render(){
 				let bug = this.props.bug;
