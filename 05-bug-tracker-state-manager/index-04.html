@@ -49,7 +49,46 @@
 	<script src="react-dom.development.js"></script>
 	<script src="babel.min.js"></script>
 	<script src="redux.js"></script>
+	<script src="react-redux.js"></script>
 	<script type="text/babel">
+
+		function spinnerReducer(currentState = 0, action){
+			if (action.type === 'INCREMENT')
+				return currentState + action.payload;
+			if (action.type === 'DECREMENT')
+				return currentState - action.payload;
+			return currentState;
+		}
+		
+
+		var spinnerActionCreators = {
+			increment(delta){
+				let inc_action = { type : 'INCREMENT', payload : delta};
+				return inc_action;
+			},
+			decrement(delta){
+				let dec_action = { type : 'DECREMENT', payload : delta};
+				return dec_action;
+			}
+		}
+
+		class Spinner extends React.Component{
+			txtDelta = React.createRef();
+			render(){
+				let { value, increment, decrement } = this.props;
+				return(
+					<div>
+						<input type="number" ref={this.txtDelta} />
+						<br/>
+						<input type="button" value="DECREMENT" onClick={() => decrement(this.txtDelta.current.valueAsNumber)} />
+						<span>[ {value} ]</span>
+						<input type="button" value="INCREMENT" onClick={() => increment(this.txtDelta.current.valueAsNumber)} />
+					</div>
+				)
+			}
+		}
+		
+
 		function bugsReducer(currentState = [], action){
 			if (action.type == 'ADD_NEW'){
 				let newState = [...currentState, action.payload];
@@ -86,8 +125,12 @@
 			}
 		}
 
-		var store = Redux.createStore(bugsReducer);
-		let bugActions = Redux.bindActionCreators(bugActionCreators, store.dispatch);
+		var rootReducer = Redux.combineReducers({
+			bugsData : bugsReducer,
+			spinnerData : spinnerReducer
+		});
+
+		var store = Redux.createStore(rootReducer);
 
 		class BugItem extends React.Component{
 			constructor(props){
@@ -184,14 +227,46 @@
 			}
 		}
 
+		{/* Creating actions */}
 		
-		function renderApp(){
-			let bugs = store.getState();
-			ReactDOM.render(<BugTracker bugs={bugs} {...bugActions} />,
+		
+
+		let ConnectedSpinner = (function(){
+			function mapDispatchToSpinnerProps(dispatch){
+				let spinnerActions = Redux.bindActionCreators(spinnerActionCreators, store.dispatch);
+				return spinnerActions;
+			}
+			function mapStateToSpinnerProps(state){
+				let spinnerValue = state.spinnerData;
+				return { value : spinnerValue};
+			}
+			return ReactRedux.connect(mapStateToSpinnerProps, mapDispatchToSpinnerProps)(Spinner);
+		})();
+
+		let ConnectedBugTracker = (function(){
+			function mapDispatchToBugTrackerProps(dispatch){
+				let bugActions = Redux.bindActionCreators(bugActionCreators, store.dispatch);
+				return bugActions;
+			}
+			function mapStateToBugTrackerProps(state){
+				let bugs = state.bugsData;
+				return { bugs : bugs };
+			}
+			return ReactRedux.connect(mapStateToBugTrackerProps, mapDispatchToBugTrackerProps)(BugTracker);
+		})();
+		
+		
+			
+		ReactDOM.render(
+			<ReactRedux.Provider store={store} >
+				<div>
+					<ConnectedSpinner />
+					<hr/>
+					<ConnectedBugTracker />
+				</div>
+			</ReactRedux.Provider>,
 				document.getElementById('root'));
-		}
-		store.subscribe(renderApp);
-		renderApp();
+		
 	</script>
 </head>
 <body>
