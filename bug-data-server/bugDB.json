@@ -1,16 +1,16 @@
 {
   "bugs": [
     {
-      "id": 5,
-      "name": "Promises are not promising",
-      "isClosed": false,
-      "createdAt": "2018-05-04T12:21:33.283Z"
-    },
-    {
       "id": 6,
       "name": "Data integrity checks failed",
       "isClosed": false,
       "createdAt": "2018-05-24T10:57:55.421Z"
+    },
+    {
+      "id": 7,
+      "name": "Server communication failure",
+      "isClosed": false,
+      "createdAt": "2018-05-30T10:32:18.568Z"
     }
   ],
   "projects": [

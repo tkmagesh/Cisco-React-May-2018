@@ -1,6 +1,10 @@
-function removeClosed(bugs){
-	let bugsToRemove = bugs.filter(bug => bug.isClosed);
-	let removeClosedAction = { type : 'REMOVE', payload : bugsToRemove};
-	return removeClosedAction;
+import axios from 'axios';
+function removeClosed(){
+	return function(dispatch, getState){
+		let bugsToRemove = getState().bugsData.filter(bug => bug.isClosed);
+		bugsToRemove.forEach(bugToRemove => 
+			axios.delete('http://localhost:3030/bugs/' + bugToRemove.id)
+				.then(response => dispatch({type : 'REMOVE', payload : bugToRemove})));
+	}
 }
 export default removeClosed;
