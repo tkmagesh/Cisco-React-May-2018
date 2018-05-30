@@ -34,7 +34,7 @@ export default connect(mapStateToBugTrackerProps, mapDispatchToBugTrackerProps)(
 
 
 export default connect(
-	(state) => ({ bugs : state.bugsData}),
+	(state) => ({ bugs : state.bugsData.filter((bug, index) => index % 2 === state.spinnerData % 2)}),
 	(dispatch) => bindActionCreators(bugActions, dispatch)
 )(BugTracker);
 

@@ -29,7 +29,7 @@ function mapStateToSpinnerProps(state){
 export default connect(mapStateToSpinnerProps, mapDispatchToSpinnerProps)(Spinner);*/
 
 export default connect(
-	(dispatch) => bindActionCreators(spinnerActions, dispatch),
-	(state) => ({ value : state.spinnerData})
+	(state) => ({ value : state.spinnerData}),
+	(dispatch) => bindActionCreators(spinnerActions, dispatch)
 )(Spinner);
 
